@@ -41,15 +41,17 @@ public class SessionActionProcessor {
 				final UserActionsList userActionsList = this.userLists.get(user);
 				final List<UserAction> userActions = userActionsList.getUserActions();
 				int counter = 1;
+				UserAction previous = null;
 				for (final UserAction action : userActions) {
 					final boolean actionContext = action.getAction().isContextChange();
-					if (counter % ACTIONS_PER_SESSION == 0) {
+					if (counter % ACTIONS_PER_SESSION == 0 || (previous != null && UserActionsList.shouldBeNewContext(action, previous))) {
 						if (actionContext) {
 							this.trueContextChange++;
 						} else {
 							this.falseContextChange++;
 						}
 						counter = 1;
+						previous = null;
 						continue;
 					} else {
 						if (actionContext) {
@@ -58,6 +60,7 @@ public class SessionActionProcessor {
 							this.trueNoContextChange++;
 						}
 					}
+					previous = action;
 					counter++;
 				}
 				
@@ -105,6 +108,12 @@ public class SessionActionProcessor {
 			// Sort actions for all users
 			sortActionsForUsers();
 			
+			final Set<String> keySet = this.userLists.keySet();
+			for (final String user : keySet) {
+				final UserActionsList list = this.userLists.get(user);
+				System.out.println(list.getUserActions());
+			}
+			
 			System.out.println("Processed actions: " + processed);
 			System.out.println("Accepted actions: " + accepted + ", rejected actions: " + rejected);
 			System.out.println("Number of users: " + this.userLists.size());
@@ -133,6 +142,14 @@ public class SessionActionProcessor {
 		}
 		
 		return result;
+	}
+	
+	public static void main(final String[] args) {
+		final String directory = "e:\\DIPLOMKA\\testlogs";
+		final SessionActionProcessor processor = new SessionActionProcessor();
+		processor.processAndSortActionFiles(directory);
+		
+		
 	}
 
 }

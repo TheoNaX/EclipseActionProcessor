@@ -11,12 +11,14 @@ public class UserAction implements Comparable<UserAction> {
 	private final String userId;
 	private final Date timeStamp;
 	private final int actionId;
+	private final String fileName;
 	
 	public UserAction(final EclipseAction action, final String fileName) throws Exception {
 		this.action = action;
 		this.userId = getUserIdFromFileName(fileName);
 		this.actionId = getActionIdFromFileName(fileName);
 		this.timeStamp = getTimeStamp(fileName);
+		this.fileName = fileName;
 	}
 	
 	public static String getUserIdFromFileName(final String fileName) {
@@ -72,6 +74,10 @@ public class UserAction implements Comparable<UserAction> {
 	public String getUserId() {
 		return this.userId;
 	}
+	
+	public String getFileName() {
+		return this.fileName;
+	}
 
 	@Override
 	public int compareTo(final UserAction o) {
@@ -85,5 +91,10 @@ public class UserAction implements Comparable<UserAction> {
 		} else {
 			return dateCompareTo;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return this.fileName + ": " +  this.action.getActionType();
 	}
 }
