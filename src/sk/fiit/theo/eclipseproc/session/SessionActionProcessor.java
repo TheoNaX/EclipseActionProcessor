@@ -10,11 +10,12 @@ import java.util.Set;
 
 import sk.fiit.theo.eclipseproc.actions.EclipseAction;
 import sk.fiit.theo.eclipseproc.filter.ActionFilterIF;
+import sk.fiit.theo.eclipseproc.filter.ValidActionsFilter;
 import sk.fiit.theo.eclipseproc.xmlparser.EclipseActionParser;
 
 public class SessionActionProcessor {
 	
-	public static final int ACTIONS_PER_SESSION = 10;
+//	public static final int ACTIONS_PER_SESSION = 10;
 	
 	private final List<ActionFilterIF> filters = new ArrayList<ActionFilterIF>();
 	private final EclipseActionParser parser = new EclipseActionParser();
@@ -31,7 +32,7 @@ public class SessionActionProcessor {
 		this.filters.add(filter);
 	}
 	
-	public void processAllActionFiles(final String directory) throws IOException {
+	public void processAllActionFiles(final String directory, final int actionsPerSession) throws IOException {
 		processAndSortActionFiles(directory);
 		
 		try {
@@ -44,7 +45,7 @@ public class SessionActionProcessor {
 				UserAction previous = null;
 				for (final UserAction action : userActions) {
 					final boolean actionContext = action.getAction().isContextChange();
-					if (counter % ACTIONS_PER_SESSION == 0 || (previous != null && UserActionsList.shouldBeNewContext(action, previous))) {
+					if (counter % actionsPerSession == 0 || (previous != null && UserActionsList.shouldBeNewContext(action, previous))) {
 						if (actionContext) {
 							this.trueContextChange++;
 						} else {
@@ -66,7 +67,7 @@ public class SessionActionProcessor {
 				
 			}
 			
-			System.out.println("SESSION RESULTS, actions per session : " + ACTIONS_PER_SESSION);
+			System.out.println("SESSION RESULTS, actions per session : " + actionsPerSession);
 			System.out.println("True context changes:" + this.trueContextChange);
 			System.out.println("False no context changes: " + this.falseNoContextChange);
 			System.out.println("True no context changes: " + this.trueNoContextChange);
@@ -144,10 +145,20 @@ public class SessionActionProcessor {
 		return result;
 	}
 	
-	public static void main(final String[] args) {
-		final String directory = "e:\\DIPLOMKA\\testlogs";
-		final SessionActionProcessor processor = new SessionActionProcessor();
-		processor.processAndSortActionFiles(directory);
+	public static void main(final String[] args) throws IOException {
+		final String directory = "e:\\DIPLOMKA\\experiments\\iit.src\\data";
+//		final int[] sessions = new int[] {5,6,7,8,9,10,15,20,25,30,35,40};
+		final int[] sessions = new int[] {5,6};
+		for (int i=0; i<sessions.length; i++) {
+			System.out.println(">>>>>>>>> Session actions count: " + sessions[i]);
+			final SessionActionProcessor processor = new SessionActionProcessor();
+			final ValidActionsFilter filter = new ValidActionsFilter();
+			processor.applyFilter(filter);
+			
+			processor.processAllActionFiles(directory, sessions[i]);
+			System.out.println();
+			System.out.println();
+		}
 		
 		
 	}

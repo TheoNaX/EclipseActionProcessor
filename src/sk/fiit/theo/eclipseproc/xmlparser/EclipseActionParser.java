@@ -29,6 +29,7 @@ public class EclipseActionParser {
 			parseDurationParameters(action, rootNode);
 			parsePackageDistanceParameters(action, rootNode);
 			parseSameActionsParameters(action, rootNode);
+			parseWorkResourcesParams(action, rootNode);
 			
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -104,7 +105,6 @@ public class EclipseActionParser {
 	private void parseBasicParameters(final EclipseAction action, final Element root) {
 		final String actionType = root.getChild(ActionXML.ACTION_TYPE).getText();
 		action.setActionType(actionType);
-		System.out.println("action type: " + actionType);
 		
 		final String previousAction = root.getChild(ActionXML.PREVIOUS_ACTION).getText();
 		action.setPreviousAction(Integer.parseInt(previousAction));
@@ -118,6 +118,13 @@ public class EclipseActionParser {
 		final String recentActions = root.getChild(ActionXML.RECENT_ACTIONS).getText();
 		action.setRecentActions(recentActions);
 		
+		final String sameProject = root.getChild(ActionXML.SAME_PROJECT).getText();
+		if (sameProject != null && sameProject.equalsIgnoreCase("false")) {
+			action.setSameProject(false);
+		} else {
+			action.setSameProject(true);
+		}
+		
 		final String contextChange = root.getChild(ActionXML.CONTEXT_CHANGE).getText();
 		if (contextChange.equalsIgnoreCase("false")) {
 			action.setContextChange(false);
@@ -125,7 +132,20 @@ public class EclipseActionParser {
 			action.setContextChange(true);
 		}
 		
+	}
+	
+	private void parseWorkResourcesParams(final EclipseAction action, final Element root) {
+		final String totalPackages = root.getChild(ActionXML.TOTAL_PACKAGES).getText();
+		action.setTotalPackages(Integer.parseInt(totalPackages));
 		
+		final String packageBefore = root.getChild(ActionXML.PACKAGE_BEFORE).getText();
+		action.setPackageBefore(Integer.parseInt(packageBefore));
+		
+		final String totalResources = root.getChild(ActionXML.TOTAL_RESOURCES).getText();
+		action.setTotalResources(Integer.parseInt(totalResources));
+		
+		final String resourceBefore = root.getChild(ActionXML.RESOURCES_BEFORE).getText();
+		action.setResourceBefore(Integer.parseInt(resourceBefore));
 		
 		
 	}

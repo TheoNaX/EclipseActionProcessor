@@ -11,7 +11,7 @@ public class SessionMain {
 		}
 		
 		final SessionActionProcessor processor = new SessionActionProcessor();
-		processor.processAllActionFiles(directory);
+		processor.processAllActionFiles(directory, 10);
 	}
 
 }

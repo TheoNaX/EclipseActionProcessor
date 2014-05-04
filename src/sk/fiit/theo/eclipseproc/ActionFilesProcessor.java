@@ -14,8 +14,10 @@ import sk.fiit.theo.eclipseproc.xmlparser.EclipseActionParser;
 
 public class ActionFilesProcessor {
 	
-	EclipseActionParser parser = new EclipseActionParser();
-	WekaDataEncoder encoder = new WekaDataEncoder();
+	private final EclipseActionParser parser = new EclipseActionParser();
+	private final WekaDataEncoder encoder = new WekaDataEncoder();
+	
+	private static final boolean INCLUDE_NEW_ACTIONS = false;
 	
 	private final List<ActionFilterIF> filters = new ArrayList<ActionFilterIF>();
 	
@@ -42,7 +44,7 @@ public class ActionFilesProcessor {
 					} else {
 						noContextChanges++;
 					}
-					final String line = this.encoder.encodeEclipseActionForWeka(action);
+					final String line = this.encoder.encodeEclipseActionForWeka(action, INCLUDE_NEW_ACTIONS);
 					writer.write(line + "\n");
 				} else {
 					System.out.println(">>>>>>>>>> Action rejected by one or more filters");
@@ -74,7 +76,8 @@ public class ActionFilesProcessor {
 	}
 	
 	public static void main(final String[] args) throws Exception {
-		String directory = "E:\\eclipse_log_files";
+//		String directory = "E:\\eclipse_log_files";
+		String directory = "e:\\DIPLOMKA\\experiments\\iit.src\\data";
 		if (args.length == 1) {
 			directory = args[0];
 		}

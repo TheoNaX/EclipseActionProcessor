@@ -9,6 +9,7 @@ public class ActionXML {
 	public static final String TIMESTAMP = "timestamp";
 	public static final String RECENT_ACTIONS = "recentActions";
 	public static final String CONTEXT_CHANGE = "contextChange";
+	public static final String SAME_PROJECT = "sameProject";
 	
 	public static final String  RECENT_LINES_ADDED = "recentLinesAdded";
 	public static final String  RECENT_LINES_CHANGED = "recentLinesChanged";
@@ -33,6 +34,11 @@ public class ActionXML {
 	public static final String SAME_ACTIONS_RATIO = "sameActionsRatio";
 	public static final String SAME_ACTIONS_TRANSITIONS_COUNT = "sameActionsTransitionsCount";
 	public static final String SAME_ACTIONS_TRANSITIONS_RATIO = "sameActionsTransitionsRatio";
+	
+	public static final String TOTAL_PACKAGES = "totalPackages";
+	public static final String TOTAL_RESOURCES = "totalResources";
+	public static final String PACKAGE_BEFORE = "packagesWorkedBefore";
+	public static final String RESOURCES_BEFORE = "resourcesWorkedBefore";
 	
 	
 	

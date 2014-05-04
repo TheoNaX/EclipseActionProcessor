@@ -13,6 +13,8 @@ public class EclipseAction {
 	protected Date timestamp;
 	protected String recentActions;
 	protected int recentSameActionsCount;
+
+	protected boolean sameProject;
 	
 	protected int packageDistanceFromLastAction;
 	
@@ -35,6 +37,11 @@ public class EclipseAction {
 	protected double averagePackageDistanceDiffForAction;
 	protected int maxPackageDistanceDiff;
 	protected int minPackageDistanceDiff;
+	
+	protected int totalPackages;
+	protected int totalResources;
+	protected int packageBefore;
+	protected int resourceBefore;
 	
 	public String getActionType() {
 		return this.actionType;
@@ -175,6 +182,37 @@ public class EclipseAction {
 		this.minPackageDistanceDiff = minPackageDistanceDiff;
 	}
 	
+	public int getTotalPackages() {
+		return this.totalPackages;
+	}
+	public void setTotalPackages(final int totalPackages) {
+		this.totalPackages = totalPackages;
+	}
+	public int getTotalResources() {
+		return this.totalResources;
+	}
+	public void setTotalResources(final int totalResources) {
+		this.totalResources = totalResources;
+	}
+	public int getPackageBefore() {
+		return this.packageBefore;
+	}
+	public void setPackageBefore(final int packageBefore) {
+		this.packageBefore = packageBefore;
+	}
+	public int getResourceBefore() {
+		return this.resourceBefore;
+	}
+	public void setResourceBefore(final int resourceBefore) {
+		this.resourceBefore = resourceBefore;
+	}
+	
+	public boolean isSameProject() {
+		return this.sameProject;
+	}
+	public void setSameProject(final boolean sameProject) {
+		this.sameProject = sameProject;
+	}
 	public String commonParamsToString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("Action type: " + this.actionType + ", ");

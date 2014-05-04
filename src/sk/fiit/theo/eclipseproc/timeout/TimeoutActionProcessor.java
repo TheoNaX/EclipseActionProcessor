@@ -18,18 +18,22 @@ public class TimeoutActionProcessor {
 	EclipseActionParser parser = new EclipseActionParser();
 	List<ActionFilterIF> filters = new ArrayList<ActionFilterIF>();
 	
-	private int trueContextChange;
-	private int falseContextChange;
-	private int trueNoContextChange;
-	private int falseNoContextChange;
 	
 	public void applyFilter(final ActionFilterIF filter) {
 		this.filters.add(filter);
 	}
 	
-	public void processAllActionFiles(final String directory) throws IOException {
+	public void processAllActionFiles(final String directory, final int minutesLimit) throws IOException {
+		
+		int trueContextChange = 0;
+		int falseContextChange = 0;
+		int trueNoContextChange = 0;
+		int falseNoContextChange = 0;
+		
+		
 		final File dir = new File(directory);
 		int processed = 0, accepted = 0, rejected = 0, contextChanges = 0, noContextChanges = 0;
+		final long limit = minutesLimit * 60 * 1000;
 		try {
 			final String[] fileNames = dir.list();
 			
@@ -38,11 +42,9 @@ public class TimeoutActionProcessor {
 				processed++;
 				final EclipseAction action = this.parser.parseEclipseAction(dir.getAbsolutePath() + File.separator + fileNames[i]); 
 				if (filterAction(action)) {
-					System.out.println(">>>>>>>>>>>>>> Action accepted by all filters");
-					System.out.println(action);
 					accepted++;
 					final long timeSincelastAction = action.getTimeSinceLastAction();
-					if (timeSincelastAction >= TIMEOUT_LIMIT) {
+					if (timeSincelastAction >= limit) {
 						timeoutContext = true;
 					} else {
 						timeoutContext = false;
@@ -50,15 +52,15 @@ public class TimeoutActionProcessor {
 					
 					if (action.isContextChange()) {
 						if (timeoutContext) {
-							this.trueContextChange++;
+							trueContextChange++;
 						} else {
-							this.falseNoContextChange++;
+							falseNoContextChange++;
 						}
 					} else {
 						if (timeoutContext) {
-							this.falseContextChange++;
+							falseContextChange++;
 						} else {
-							this.trueNoContextChange++;
+							trueNoContextChange++;
 						}
 					}
 					
@@ -69,18 +71,16 @@ public class TimeoutActionProcessor {
 					}
 					
 				} else {
-					System.out.println(">>>>>>>>>> Action rejected by one or more filters");
-					System.out.println(action);
 					rejected++;
 				}
 			}
 			System.out.println("Processed actions: " + processed + ", accepted actions: " + accepted + ", rejected actions: " + rejected);
 			System.out.println("Context changes: " + contextChanges + ", No context changes: " + noContextChanges);
-			System.out.println("TIMEOUT RESULTS, LIMIT (min) : " + TIMEOUT_LIMIT_MIN);
-			System.out.println("True context changes:" + this.trueContextChange);
-			System.out.println("False no context changes: " + this.falseNoContextChange);
-			System.out.println("True no context changes: " + this.trueNoContextChange);
-			System.out.println("False context changes: " + this.falseContextChange);
+			System.out.println("TIMEOUT RESULTS, LIMIT (min) : " + minutesLimit);
+			System.out.println("True context changes:" + trueContextChange);
+			System.out.println("False no context changes: " + falseNoContextChange);
+			System.out.println("True no context changes: " + trueNoContextChange);
+			System.out.println("False context changes: " + falseContextChange);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -102,14 +102,26 @@ public class TimeoutActionProcessor {
 	}
 	
 	public static void main(final String[] args) throws IOException {
-		String directory = "E:\\eclipse_log_files";
+		String directory = "e:\\DIPLOMKA\\experiments\\iit.src\\data";
 		if (args.length == 1) {
 			directory = args[0];
 		}
 		final TimeoutActionProcessor processor = new TimeoutActionProcessor();
 		final ValidActionsFilter filter = new ValidActionsFilter();
 		processor.applyFilter(filter);
-		processor.processAllActionFiles(directory);
+		//processor.processAllActionFiles(directory);
+		computeForDifferentValues(directory, processor);
+	}
+	
+	private static void computeForDifferentValues(final String directory, final TimeoutActionProcessor processor) throws IOException {
+		final int limits[] = new int[] {5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60};
+		for (int i=0; i<limits.length; i++) {
+			System.out.println("Timeout limit: " + limits[i] + " minutes");
+			processor.processAllActionFiles(directory, limits[i]);
+			System.out.println();
+			System.out.println();
+		}
+		
 	}
 
 }
